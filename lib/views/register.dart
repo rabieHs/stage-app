@@ -1,21 +1,16 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:stage_app/controllers/responsive.dart';
-import 'package:stage_app/core/constants.dart';
-import 'package:stage_app/views/register.dart';
 
-class Welcome extends StatefulWidget {
-  const Welcome({super.key});
+import '../core/constants.dart';
+
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<Welcome> createState() => _WelcomeState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _WelcomeState extends State<Welcome> {
+class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,7 +132,7 @@ class _WelcomeState extends State<Welcome> {
                       height: 30,
                     ),
                     RichText(
-                      text: TextSpan(
+                      text: const TextSpan(
                           text: "You Don't have An Acccount? ",
                           style: TextStyle(
                               fontSize: 12,
@@ -145,10 +140,6 @@ class _WelcomeState extends State<Welcome> {
                               color: Colors.black),
                           children: [
                             TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) => Register())),
                               text: "Register",
                               style: TextStyle(
                                   fontSize: 12,
