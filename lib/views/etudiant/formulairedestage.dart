@@ -1,11 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/constants.dart';
 
 class formulairedestage extends StatefulWidget {
-  const formulairedestage({Key? key}) : super(key: key);
+  final String offre_id;
+  const formulairedestage({
+    Key? key,
+    required this.offre_id,
+  }) : super(key: key);
 
   @override
   State<formulairedestage> createState() => _formulairedestageState();
@@ -84,7 +91,14 @@ class _formulairedestageState extends State<formulairedestage> {
                         SizedBox(height: 10.0),
                         MaterialButton(
                           onPressed: () {
-                            showDialog(
+                            final offre_id = widget.offre_id;
+                            final id = FirebaseAuth.instance.currentUser!.uid;
+                            final demande_id = Uuid().v4();
+
+                            /// =>doc(demande_id) + donnees
+                            // final nom = controller.text
+
+                            /*  showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
@@ -100,7 +114,7 @@ class _formulairedestageState extends State<formulairedestage> {
                                       )
                                     ],
                                   );
-                                });
+                                }); */
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),

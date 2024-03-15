@@ -36,6 +36,8 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  ///demandes ==> nom etudiant , spec , offre_id
+  /// final offre_id = list[index]["oofre_id"]
   // This widget is the root of your application.
 
   ///
