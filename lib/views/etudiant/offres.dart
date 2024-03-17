@@ -87,32 +87,139 @@ class _OffresState extends State<Offres> {
                             SizedBox(
                               height: 30,
                             ),
-                            Text(list[index]["nom"]),
+                            Text(list[index]["titre"]),
                             SizedBox(
                               height: 30,
                             ),
                             MaterialButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => formulairedestage(
-                                          offre_id: list[index]["offre_id"],
-                                        )));
-
-                                // Navigator.pop(context);
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text("context de l'offre"),
+                                        content: Container(
+                                          height: 150,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Email: ",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(list[index]["email"],
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.grey))
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Niveau:  ",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(list[index]["niveau"],
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.grey))
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Specialité:  ",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                      list[index]["specialite"],
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.grey))
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "description :  ",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                      list[index]
+                                                          ["description"],
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.grey))
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actionsAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        actions: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        formulairedestage(
+                                                      societe_id: list[index]
+                                                          ["id"],
+                                                      offre_id: list[index]
+                                                          ["offre_id"],
+                                                      nomSociete: list[index]
+                                                          ["nom"],
+                                                      titre: list[index]
+                                                          ["titre"],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child:
+                                                    Text("remplir formulaire"),
+                                              )),
+                                        ],
+                                      );
+                                    });
                               },
+
+                              // Navigator.pop(context);
+
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               color: primaryColor,
                               child: Container(
-                                  height: 45,
-                                  width: 200,
-                                  child: Center(
-                                      child: Text(
-                                    "remplir formulaire",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ))),
+                                height: 45,
+                                width: 200,
+                                child: Center(
+                                  child: Text(
+                                    "Voir",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

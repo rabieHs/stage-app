@@ -23,6 +23,7 @@ class _FormulairedeloffreState extends State<Formulairedeloffre> {
   final niveauController = TextEditingController();
   final specialiteController = TextEditingController();
   final descriptionController = TextEditingController();
+  final titreController = TextEditingController();
 
   String dropdownvalue = 'one';
   @override
@@ -39,6 +40,12 @@ class _FormulairedeloffreState extends State<Formulairedeloffre> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
+                        TextFormField(
+                            controller: titreController,
+                            decoration: InputDecoration(
+                                labelText: 'titre de stage',
+                                border: const OutlineInputBorder())),
+                        SizedBox(height: 10.0),
                         TextFormField(
                             controller: nomController,
                             decoration: InputDecoration(
@@ -155,6 +162,7 @@ class _FormulairedeloffreState extends State<Formulairedeloffre> {
                               String niveau = niveauController.text;
                               String description = descriptionController.text;
                               String specialite = specialiteController.text;
+                              String titre = titreController.text;
                               String type = dropdownvalue == "one"
                                   ? "saisonniaire"
                                   : "stagiare";
@@ -177,7 +185,8 @@ class _FormulairedeloffreState extends State<Formulairedeloffre> {
                                 "niveau": niveau,
                                 "type": type,
                                 "date_debut": dateDebut,
-                                "date_fin": dateFin
+                                "date_fin": dateFin,
+                                "titre": titre,
                               }).whenComplete(() {
                                 Navigator.pop(context);
                                 showDialog(

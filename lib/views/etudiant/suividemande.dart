@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,6 +14,17 @@ class suividemande extends StatefulWidget {
 }
 
 class _suividemandeState extends State<suividemande> {
+  Future<List<Map>> getMyDemands() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final result = await FirebaseFirestore.instance
+        .collection('demandes')
+        .where("user_id", isEqualTo: uid)
+        .get();
+    return result.docs.map((doc) {
+      return doc.data();
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,593 +93,82 @@ class _suividemandeState extends State<suividemande> {
                 ],
               ),
             ),
-            ListView(shrinkWrap: true, children: [
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("titre de stage"),
-                          content: Container(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Nom&Prenom:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Niveau:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("3 émé ",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Specialité:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                        "Informatique de gestion Informatique de gestion",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date debut:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("15/05/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date fin:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("15/06/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                              ],
+            FutureBuilder<List<Map>>(
+                future: getMyDemands(),
+                builder: (context, resultat) {
+                  if (resultat.hasError) {
+                    print(resultat.error);
+                    return Center(
+                      child: Text("Error"),
+                    );
+                  }
+                  if (resultat.data == null) {
+                    return CircularProgressIndicator();
+                  } else {
+                    final list = resultat.data!;
+
+                    return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 4.0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ),
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text("annuler"),
-                                )),
-                          ],
-                        );
-                      });
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage("assets/bhbank.jpg"),
-                ),
-                title: Text('nom de lentreprise'),
-                subtitle: Text('email'),
-                trailing: Icon(Icons.circle_rounded),
-                iconColor: Colors.orange,
-                minLeadingWidth: 100,
-              ),
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("titre de stage"),
-                          content: Container(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Nom&Prenom:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        AssetImage("assets/bhbank.jpg"),
+                                  ),
+                                  const SizedBox(width: 16.0),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          list[index]["nom_societe"],
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4.0),
+                                        Text(
+                                          list[index]["titre"],
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Niveau:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("3 émé ",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Specialité:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                        "Informatique de gestion Informatique de gestion",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date debut:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("12/05/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date fin:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("12/08/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor:
+                                        list[index]["status"] == "en attente"
+                                            ? Colors.orange
+                                            : list[index]["status"] == "accepte"
+                                                ? Colors.green
+                                                : Colors.red,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text("annuler"),
-                                )),
-                          ],
-                        );
-                      });
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage("assets/bhbank.jpg"),
-                ),
-                title: Text('nom de lentreprise'),
-                subtitle: Text('email'),
-                trailing: Icon(Icons.circle_rounded),
-                iconColor: Colors.green,
-                minLeadingWidth: 100,
-              ),
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("titre de stage"),
-                          content: Container(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Nom&Prenom:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Niveau:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("3 émé ",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Specialité:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                        "Informatique de gestion Informatique de gestion",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date debut:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("01/05/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date fin:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("1/07/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text("annuler"),
-                                )),
-                          ],
-                        );
-                      });
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage("assets/bhbank.jpg"),
-                ),
-                title: Text('nom de lentreprise'),
-                subtitle: Text('email'),
-                trailing: Icon(Icons.circle_rounded),
-                iconColor: Colors.red,
-                minLeadingWidth: 100,
-              ),
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("titre de stage"),
-                          content: Container(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Nom&Prenom:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ghjgii@gmail.com",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Niveau:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("3 émé ",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Specialité:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                        "Informatique de gestion Informatique de gestion",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date debut:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("14/06/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date fin:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("14/07/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text("annuler"),
-                                )),
-                          ],
-                        );
-                      });
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage("assets/bhbank.jpg"),
-                ),
-                title: Text('nom de lentreprise'),
-                subtitle: Text('email'),
-                trailing: Icon(Icons.circle_rounded),
-                iconColor: Colors.green,
-                minLeadingWidth: 100,
-              ),
-              ListTile(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text("titre de stage"),
-                          content: Container(
-                            height: 150,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Nom&Prenom:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("ay esm",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Email: ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("hjhhf@gmail.com",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Niveau:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("3 émé ",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Specialité:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                        "Informatique de gestion Informatique de gestion",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date debut:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("12/07/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "date fin:  ",
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text("12/08/2024",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey))
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          actionsAlignment: MainAxisAlignment.spaceEvenly,
-                          actions: [
-                            ElevatedButton(
-                                onPressed: () {},
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 10),
-                                  child: Text("annuler"),
-                                )),
-                          ],
-                        );
-                      });
-                },
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage("assets/bhbank.jpg"),
-                ),
-                title: Text('nom de lentreprise'),
-                subtitle: Text('email'),
-                trailing: Icon(Icons.circle_rounded),
-                iconColor: Colors.orange,
-                minLeadingWidth: 100,
-              ),
-            ]),
+                          );
+                        });
+                  }
+                })
+
+            /*   ListView(shrinkWrap: true, children: [
+             
+            ]), */
           ],
         ));
   }

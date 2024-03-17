@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,6 +14,20 @@ class Stagiaires extends StatefulWidget {
 }
 
 class _StagiairesState extends State<Stagiaires> {
+  Future<List<Map>> getMesStagiaires() async {
+    //get societe id
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final result = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection("stagiaires")
+        .get();
+    return result.docs.map((doc) {
+      return doc.data();
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
