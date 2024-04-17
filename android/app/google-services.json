@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "714070160301",
+    "project_id": "stage-db-2c0b5",
+    "storage_bucket": "stage-db-2c0b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714070160301:android:f015ffb27f9e646e85e724",
+        "android_client_info": {
+          "package_name": "com.example.stage_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCl5rRQyM9uqYsjOtLGr4hEwpjRW7zM5ac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
